@@ -25,7 +25,7 @@ Verified in a clean Python 3.12 kernel with NumPy 2.5.5, pandas 3.1.1 and Matplo
 
 ## Using the demo
 
-Choose a month, start, duration and wet threshold. Press **Start** to run the simulation and play one outdoor event. Rain falls over the canopy on wet hours. Select any hour to inspect it or press **Replay event** to watch the whole sequence again. The running estimate and 95% Wilson interval summarise all trials. The event settings panel compares the exact fitted risks at your selected start and at 13:00. [User guide and labelled screenshot](USER_GUIDE.md).
+Choose a month, start, duration and wet threshold. Press **Start** to watch one outdoor event progress with the simulation. Rain falls over the canopy during wet hours. Each hour shows the fitted wet chance, the random draw, and whether exposure has occurred. Pause or finish the run to inspect an hour or replay the scene. The running estimate and 95% Wilson interval summarise all trials. The event settings panel compares the exact fitted risks at your selected start and at 13:00. [User guide and labelled screenshot](USER_GUIDE.md).
 
 ## Model and mathematics
 

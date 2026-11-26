@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Malabe rain risk</title>
-  <link rel="stylesheet" href="style.css?v=event-scene-1">
+  <link rel="stylesheet" href="style.css?v=event-scene-2">
   <script src="rain-config.js" defer></script>
-  <script src="script.js?v=event-scene-1" defer></script>
+  <script src="script.js?v=event-scene-2" defer></script>
 </head>
 <body>
   <main class="shell">
@@ -76,18 +76,34 @@
               <div class="scene-clouds"></div>
               <div class="scene-hills"></div>
               <div class="scene-lawn"></div>
-              <div class="scene-tent"><i></i><i></i><b></b></div>
+              <div class="scene-path"></div>
+              <div class="scene-tent">
+                <i class="guest"></i><i class="guest"></i><b></b>
+                <span class="eave"></span><span class="eave"></span>
+              </div>
+              <span class="scene-flag"><i></i></span>
+              <span class="scene-flag scene-flag-right"><i></i></span>
+              <div class="scene-puddles"><i></i><i></i><i></i></div>
               <div id="scene-rain" class="scene-rain"></div>
             </div>
             <div class="scene-readout">
               <p id="scene-time">Event preview</p>
               <p id="scene-weather">Ready to start</p>
+              <p id="scene-step"></p>
             </div>
             <span class="sample-result" id="sample-result" hidden></span>
           </div>
 
           <ol id="sample-hours" class="sample-hours" aria-label="Inspect each simulated hour"></ol>
-          <p class="sample-note">Any wet hour counts as exposure. Select an hour to inspect it.</p>
+          <div id="scene-decision" class="scene-decision" hidden>
+            <div class="draw-labels">
+              <p><strong id="scene-probability"></strong> wet chance <span id="scene-conditioning"></span></p>
+              <p>Random draw <strong id="scene-draw"></strong></p>
+            </div>
+            <div id="draw-scale" class="draw-scale" aria-hidden="true"><span></span></div>
+            <p class="sample-note" id="scene-reason"></p>
+          </div>
+          <p class="sample-note">Pause or finish the run to replay or inspect a specific hour.</p>
         </section>
 
         <h3 class="plot-heading">Risk as trials accumulate</h3>

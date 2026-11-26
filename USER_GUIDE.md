@@ -15,15 +15,15 @@ Open the [live demo](https://kumaragekpv.github.io/malabe-rain-risk/). To open i
 | Start / Resume | Runs batches of events. After pausing, Resume continues from the saved count. | Up to 20,000 trials per run | Ready, zero trials |
 | Pause | Freezes the sample and stops adding trials. | Available during a run | Disabled before Start |
 | Reset | Clears results and keeps the current settings. | Available once a run starts | Disabled before Start |
-| Replay event | Plays the same outdoor event again. | Available after a sample is generated | Disabled before Start |
-| Hour cards | Select an hour to show its wet or dry scene. | One card per hour of the event | Disabled before Start |
+| Replay event | Plays the same outdoor event again. | While paused or after completion | Disabled before Start |
+| Hour cards | Select an hour to see its weather, fitted wet chance, and random draw. | One card per event hour, while paused or after completion | Disabled before Start |
 
 Changing any event setting clears the existing trials. Press **Start** to simulate the new scenario.
 
 ## Reading the outputs
 
 - **Trials** and the progress bar show how many of the 20,000 events have been simulated so far.
-- **Outdoor event** plays an actual trial from the opening batch. It uses the first exposed trial in that batch when available, or the first dry trial if the batch is all dry. The scene highlights each hour in order and shows rain over the canopy when wet. Playback stops at the final hour. Replay or select an hour to inspect it. Both work independently of the trial count. Each card shows the wet chance used for its draw. Reduced-motion settings replace moving rain with still rain.
+- **Outdoor event** plays an actual trial from the opening batch. It uses the first exposed trial in that batch when available, or the first dry trial if the batch is all dry. The scene advances through the event hours as the trial count grows. The last hour remains active until the run completes. Wet hours show rain, roof runoff and puddle ripples. The decision strip compares the random draw with the fitted wet chance. A draw below that chance is wet. The panel shows whether a wet hour has occurred yet. Pause or finish to replay or inspect an hour. Reduced-motion settings show still weather details.
 - **Simulated exposure** is the percentage of events exposed. The teal line tracks that estimate as trial count grows.
 - **95% Wilson interval** appears in the readout and as shading around the running estimate. It describes sampling variation with the fitted model held fixed. More trials usually narrow the interval.
 - **Exact fitted risk** is the dashed line. It comes from multiplying the dry-state probabilities, so it stays fixed for the current settings. The comparison panel shows the selected hour, the 13:00 baseline, and their difference in percentage points.

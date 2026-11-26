@@ -17,6 +17,6 @@ Every October had **744** valid local hours and every November had **720**. The 
 
 ## Attribution and licence
 
-Source data are [ECMWF ERA5 hourly data on single levels](https://doi.org/10.24381/cds.adbb2d47), produced for the Copernicus Climate Change Service and accessed through [Open-Meteo](https://open-meteo.com/en/docs/historical-weather-api). The [ERA5 catalogue](https://cds.climate.copernicus.eu/stac-browser/collections/reanalysis-era5-single-levels) and [Open-Meteo terms](https://open-meteo.com/en/terms) identify the data licence as [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The project extracts the selected ERA5 records to CSV and estimates whole local-hour totals in the notebook. The free API access terms apply to this educational use.
+Contains modified Copernicus Climate Change Service information. Source data are [ECMWF ERA5 hourly data on single levels](https://doi.org/10.24381/cds.adbb2d47), produced for the Copernicus Climate Change Service and accessed through [Open-Meteo](https://open-meteo.com/en/docs/historical-weather-api). The [ERA5 catalogue](https://cds.climate.copernicus.eu/stac-browser/collections/reanalysis-era5-single-levels) and [Open-Meteo terms](https://open-meteo.com/en/terms) identify the data licence as [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The project extracts the selected ERA5 records to CSV and estimates whole local-hour totals in the notebook.
 
-Map point from [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
+The query location uses a point from [OpenStreetMap contributors](https://www.openstreetmap.org/copyright). The repository’s [MIT licence](../LICENSE) covers the project code.

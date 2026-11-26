@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Malabe rain risk</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="rain-config.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <h1>Malabe rain risk</h1>
+      <p>Explore the chance that an outdoor event encounters at least one wet hour in October or November.</p>
+    </header>
+
+    <div class="workspace">
+      <section class="panel scenario" aria-labelledby="scenario-heading">
+        <h2 id="scenario-heading">Event settings</h2>
+        <div class="fields">
+          <label>Month<select id="month"></select></label>
+          <label>Local start<select id="start-hour"></select></label>
+          <label>Duration<select id="duration"></select></label>
+          <label>Wet threshold<select id="threshold"></select></label>
+        </div>
+        <div class="actions">
+          <button class="primary" id="start" type="button">Start</button>
+          <button id="pause" type="button" disabled>Pause</button>
+          <button id="reset" type="button" disabled>Reset</button>
+        </div>
+        <div class="comparison">
+          <h3>Compared with 13:00</h3>
+          <dl>
+            <div><dt id="selected-time">Selected start</dt><dd id="selected-risk">—</dd></div>
+            <div><dt>13:00 baseline</dt><dd id="baseline-risk">—</dd></div>
+          </dl>
+          <p id="risk-difference"></p>
+          <p class="fine">Exact fitted risks for the same month, duration and threshold.</p>
+        </div>
+      </section>
+
+      <section class="panel simulation" aria-labelledby="simulation-heading">
+        <div class="panel-heading">
+          <h2 id="simulation-heading">Live simulation</h2>
+          <p class="status" id="status" role="status">Ready</p>
+        </div>
+        <dl class="metrics">
+          <div><dt>Trials</dt><dd id="trials">0</dd></div>
+          <div><dt>Simulated exposure</dt><dd id="estimate">—</dd></div>
+          <div><dt>95% Wilson interval</dt><dd id="interval">—</dd></div>
+        </dl>
+        <div class="plot">
+          <canvas id="risk-chart" role="img" aria-label="Running risk estimate by trial count. Current values are shown above.">
+            The trial count, exposure estimate and Wilson interval are displayed above.
+          </canvas>
+          <p class="empty" id="chart-empty">Press Start to simulate events.</p>
+        </div>
+        <div class="legend" aria-label="Chart legend">
+          <span><i class="key estimate-key"></i>Running estimate</span>
+          <span><i class="key interval-key"></i>95% Wilson interval</span>
+          <span><i class="key exact-key"></i>Exact fitted risk</span>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel reference" aria-labelledby="reference-heading">
+      <div class="panel-heading">
+        <div>
+          <h2 id="reference-heading">Notebook reference check</h2>
+          <p id="reference-scenario"></p>
+        </div>
+        <p class="status" id="check-status">Checking</p>
+      </div>
+      <dl class="reference-values">
+        <div><dt>Notebook exact probability</dt><dd id="notebook-exact">—</dd></div>
+        <div><dt>Browser exact probability</dt><dd id="browser-exact">—</dd></div>
+        <div><dt>Absolute difference</dt><dd id="absolute-difference">—</dd></div>
+        <div><dt>Tolerance</dt><dd id="tolerance">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="panel about" aria-labelledby="about-heading">
+      <h2 id="about-heading">About and how to use</h2>
+      <div class="about-columns">
+        <p>Times use Sri Lanka local time (Asia/Colombo). An hourly interval is wet when it records at least the selected rainfall threshold. An event is exposed if one or more of its hours are wet.</p>
+        <p>Choose a start and compare its exact fitted risk with 13:00 under the same settings. The combined option samples October and November in proportion to their 31 and 30 days.</p>
+        <p>The Wilson interval describes sampling error from running the simulation with fixed fitted probabilities. It does not include uncertainty in the rainfall data or fitted model.</p>
+        <p>The model was fitted to October–November hourly ERA5 rainfall from 2016–2022. Use the historical risks for advance planning. Check a current forecast near the event date.</p>
+      </div>
+      <p class="credits">Contains modified Copernicus Climate Change Service information. <a href="https://doi.org/10.24381/cds.adbb2d47">ECMWF ERA5 hourly data</a> accessed via the <a href="https://open-meteo.com/en/docs/historical-weather-api">Open-Meteo Historical Weather API</a>.</p>
+    </section>
+  </main>
+</body>
+</html>

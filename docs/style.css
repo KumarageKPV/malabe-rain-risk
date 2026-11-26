@@ -117,62 +117,138 @@ dd { font-variant-numeric: tabular-nums; font-weight: 630; }
 #run-progress::-webkit-progress-value { background: var(--accent); border-radius: 5px; }
 #run-progress::-moz-progress-bar { background: var(--accent); border-radius: 5px; }
 
-.sample { margin-top: 15px; padding: 12px; border: 1px solid #325060; border-radius: 11px; background: #101e28; }
+.sample { margin-top: 14px; padding: 12px; border: 1px solid #325060; border-radius: 11px; background: #101e28; }
 .sample-heading { display: flex; align-items: start; justify-content: space-between; gap: 8px 14px; }
-.sample-heading p, .sample-note { margin: 4px 0 0; color: var(--muted); font-size: .81rem; line-height: 1.35; }
-.sample-result { padding: 4px 8px; border: 1px solid #42748c; border-radius: 6px; color: #b4e6ff; background: #1a3a4d; font-size: .82rem; font-weight: 680; white-space: nowrap; }
-.sample-result[data-outcome="dry"] { color: #ffe1a4; background: #403323; border-color: #7a603b; }
-.sample-hours { display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
-.sample-hours li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "time icon" "state icon" "chance chance";
-  align-items: center;
-  min-height: 75px;
-  padding: 7px 9px;
-  border: 1px solid #335161;
-  border-radius: 8px;
-  background: #152b38;
-}
-.sample-hours li[data-weather="wet"] { border-color: #3d6e86; background: linear-gradient(140deg, #1d3d50, #152b39 78%); color: #dcf5ff; }
-.sample-hours li[data-weather="dry"] { border-color: #6b5a40; background: linear-gradient(134deg, #382f24, #262b2c 86%); color: #ffebc4; }
-.sample[data-running="true"] li:is([data-weather="wet"],[data-weather="dry"]) {
-  animation: reveal-hour 330ms cubic-bezier(.18,.78,.27,1) var(--reveal-delay) both;
-}
-@keyframes reveal-hour {
-  from { transform: translateY(3px); filter: brightness(1.25); }
-  to { transform: translateY(0); filter: brightness(1); }
-}
-.sample-time { grid-area: time; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
-.sample-state { grid-area: state; font-size: .97rem; font-weight: 690; }
-.sample-chance { grid-area: chance; min-height: 1.15em; color: var(--muted); font-size: .77rem; line-height: 1.15; }
+.sample-heading p, .sample-note { margin: 4px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.35; }
+.replay { flex: 0 0 auto; min-height: 34px; padding: 5px 9px; }
 
-.weather-icon { grid-area: icon; position: relative; width: 29px; height: 28px; margin-left: 3px; }
-.weather-icon::before { content: ""; position: absolute; }
-[data-weather="waiting"] .weather-icon::before { top: 6px; left: 5px; width: 16px; height: 16px; border-radius: 50%; border: 1px dashed #638595; }
-[data-weather="dry"] .weather-icon::before { top: 6px; left: 6px; width: 15px; height: 15px; border-radius: 50%; background: var(--exact); box-shadow: 0 0 0 3px #f5c98a30, 0 0 12px #f5c98a48; }
-[data-weather="wet"] .weather-icon::before { top: 3px; left: 2px; width: 25px; height: 11px; border-radius: 9px; background: #b6dbee; }
-[data-weather="wet"] .weather-icon::after { content: ""; position: absolute; top: 0; left: 8px; width: 13px; height: 10px; border-radius: 50%; background: #b6dbee; }
-.weather-icon i {
+.event-scene {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 162px;
+  margin-top: 10px;
+  padding: 11px;
+  border: 1px solid #42667a;
+  border-radius: 9px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(175deg, #276080, #4e999d 75%);
+}
+.event-scene[data-weather="wet"] { background: linear-gradient(172deg, #234257, #386274 78%); border-color: #527e91; }
+.scene-art, .scene-rain { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.scene-art { z-index: -1; }
+.scene-sun { position: absolute; top: 24px; right: 23%; width: 30px; aspect-ratio: 1; border-radius: 50%; background: #fbe1ab; box-shadow: 0 0 0 8px #ffdfaa2b, 0 0 24px #f9dca16b; }
+.scene-clouds {
   position: absolute;
-  top: 18px;
-  left: 6px;
+  inset: 10px 0 auto;
+  height: 55px;
+  opacity: .66;
+  background: radial-gradient(ellipse 31px 13px at 39% 30px,#a8ced9 98%,transparent), radial-gradient(ellipse 15px 11px at 40% 20px,#a8ced9 98%,transparent),
+             radial-gradient(ellipse 41px 10px at 88% 35px,#a8ced9 98%,transparent), radial-gradient(ellipse 24px 11px at 87% 28px,#a8ced9 98%,transparent);
+}
+[data-weather="wet"] .scene-sun { opacity: 0; }
+[data-weather="wet"] .scene-clouds {
+  inset: 4px 0 auto;
+  height: 89px;
+  opacity: .9;
+  background: radial-gradient(ellipse 90px 18px at 33% 29px,#7395a6 98%,transparent),
+             radial-gradient(ellipse 52px 23px at 39% 23px,#7395a6 98%,transparent),
+             radial-gradient(ellipse 97px 19px at 73% 43px,#648799 98%,transparent),
+             radial-gradient(ellipse 51px 24px at 78% 38px,#648799 98%,transparent);
+}
+.scene-hills {
+  position: absolute;
+  inset: 58px -4% 18px;
+  background: #2b6c68;
+  clip-path: polygon(0 85%,6% 54%,15% 71%,26% 36%,38% 62%,49% 42%,58% 69%,71% 29%,80% 55%,92% 41%,100% 74%,100% 100%,0 100%);
+}
+[data-weather="wet"] .scene-hills { background: #29535b; }
+.scene-lawn {
+  position: absolute;
+  inset: auto 0 0;
+  height: 36px;
+  background: radial-gradient(ellipse 9% 28% at 30% 50%,#5d9e815e 97%,transparent), radial-gradient(ellipse 12% 35% at 74% 70%,#31695869 97%,transparent), linear-gradient(#2e635b,#17423f);
+}
+[data-weather="wet"] .scene-lawn {
+  background: radial-gradient(ellipse 9% 15% at 34% 63%,#6cabc36b 96%,transparent), radial-gradient(ellipse 11% 20% at 75% 77%,#6cabc362 96%,transparent), linear-gradient(#274b53,#18383d);
+}
+.scene-tent {
+  position: absolute;
+  left: 50%;
+  bottom: 21px;
+  width: clamp(150px, 42%, 300px);
+  height: 83px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 4px #0b282673);
+}
+.scene-tent::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 37px;
+  clip-path: polygon(0 87%,50% 0,100% 87%,100% 100%,0 100%);
+  background: repeating-linear-gradient(98deg,#4ab4a9 0 18%,#71dac6 18% 36%);
+}
+.scene-tent::after {
+  content: "";
+  position: absolute;
+  inset: 35px 9% 0;
+  border-right: 3px solid #b8dfd4;
+  border-left: 3px solid #b8dfd4;
+  background: linear-gradient(#123c4226,#143b4169);
+}
+.scene-tent i { position: absolute; bottom: 5px; left: 34%; width: 11px; height: 23px; background: #193e45; border-radius: 6px 6px 3px 3px; z-index: 1; }
+.scene-tent i:nth-child(2) { left: auto; right: 33%; height: 20px; }
+.scene-tent i::before { content: ""; position: absolute; left: 1px; top: -9px; width: 9px; height: 9px; border-radius: 50%; background: #b1cfc3; }
+.scene-tent b { position: absolute; z-index: 2; bottom: 4px; left: 43%; width: 18%; height: 15px; border: 2px solid #a7beb9; border-top: 3px solid #dbc597; border-bottom: 0; }
+.scene-rain { opacity: 0; }
+[data-weather="wet"] .scene-rain { opacity: 1; }
+.scene-rain i {
+  position: absolute;
+  top: 0;
+  left: var(--rain-x);
   width: 2px;
-  height: 6px;
-  border-radius: 4px;
-  background: var(--rain);
-  transform: rotate(22deg);
+  height: var(--rain-length);
+  border-radius: 50%;
+  background: linear-gradient(transparent,#b3e2f5);
+  opacity: .85;
+  transform: translateY(var(--rain-y)) rotate(21deg);
 }
-.weather-icon i:nth-of-type(2) { left: 13px; top: 19px; }
-.weather-icon i:nth-of-type(3) { left: 20px; }
-.sample[data-running="true"] .weather-icon i { animation: fall 620ms ease-in infinite; }
-.sample[data-running="true"] .weather-icon i:nth-of-type(2) { animation-delay: -210ms; }
-.sample[data-running="true"] .weather-icon i:nth-of-type(3) { animation-delay: -420ms; }
-@keyframes fall {
-  0% { transform: translate(2px,-3px) rotate(22deg); opacity: .45; }
-  40% { opacity: 1; }
-  100% { transform: translate(-2px,5px) rotate(22deg); opacity: .25; }
+[data-weather="wet"][data-playing="true"] .scene-rain i { animation: scene-fall var(--rain-period) linear var(--rain-delay) infinite; }
+@keyframes scene-fall {
+  from { transform: translate(27px,-32px) rotate(21deg); }
+  to { transform: translate(-28px,169px) rotate(21deg); }
 }
+.scene-readout { padding: 5px 9px; border: 1px solid #a7d4de52; border-radius: 7px; background: #081c28e8; }
+.scene-readout p { margin: 0; }
+#scene-time { color: #d2edf6; font-size: .84rem; font-variant-numeric: tabular-nums; }
+#scene-weather { margin-top: 3px; color: white; font-weight: 700; }
+.sample-result { padding: 4px 8px; border: 1px solid #6499b3; border-radius: 6px; color: #e2f5ff; background: #153345; font-size: .82rem; font-weight: 690; white-space: nowrap; }
+.sample-result[data-outcome="dry"] { color: #ffe1a4; background: #403323; border-color: #7a603b; }
+
+.sample-hours { display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.hour-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "time state" "chance chance";
+  align-items: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 5px 7px;
+  text-align: left;
+  font-weight: 500;
+  background: #172a36;
+}
+.hour-card[data-weather="wet"] { border-color: #45788f; background: #1b3b4d; color: #dcf5ff; }
+.hour-card[data-weather="dry"] { border-color: #786443; background: #352f26; color: #ffebc4; }
+.hour-card[data-weather]:hover:not(:disabled) { filter: brightness(1.16); }
+.hour-card[aria-pressed="true"] { outline: 2px solid #eef7fb; outline-offset: -3px; }
+.hour-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sample-time { grid-area: time; color: #d5e6ee; font-size: .83rem; font-variant-numeric: tabular-nums; }
+.sample-state { grid-area: state; font-size: .9rem; font-weight: 690; }
+.sample-chance { grid-area: chance; min-height: 1.1em; color: var(--muted); font-size: .78rem; line-height: 1.15; }
 
 .plot-heading { margin-top: 14px; }
 .plot { position: relative; }
@@ -230,6 +306,6 @@ canvas { display: block; width: 100%; height: 207px; }
   canvas { height: 187px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sample[data-running="true"] li, .sample[data-running="true"] .weather-icon i { animation: none !important; }
+  [data-weather="wet"][data-playing="true"] .scene-rain i { animation: none; }
   .risk-bar::after { transition: none; }
 }

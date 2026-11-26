@@ -5,7 +5,7 @@
   const maxTrials = 20_000;
   const batchSize = 100;
   const batchDelay = 36;
-  const sampleRefresh = 2_500;
+  const hourPlaybackTime = 1_350;
   const number = new Intl.NumberFormat("en");
   const percent = new Intl.NumberFormat("en", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const byId = (id) => document.getElementById(id);
@@ -19,7 +19,10 @@
   const chart = byId("risk-chart");
   const context = chart.getContext("2d");
   const progress = byId("run-progress");
-  const samplePanel = byId("sample");
+  const scene = byId("event-scene");
+  const sceneTime = byId("scene-time");
+  const sceneWeather = byId("scene-weather");
+  const replayButton = byId("replay");
   const sampleHours = byId("sample-hours");
   const sampleDescription = byId("sample-description");
   const sampleResult = byId("sample-result");
@@ -27,6 +30,10 @@
   let selectedScenario;
   let fittedRisk;
   let timer = null;
+  let sceneTimer = null;
+  let example = null;
+  let currentHour = 0;
+  let resumePlayback = false;
   let trials = 0;
   let exposed = 0;
   const history = [];
@@ -81,8 +88,11 @@
 
   function renderSample(sample) {
     sampleDescription.textContent = sample
-      ? "Trial " + number.format(sample.trial) + " · " + config.months[sample.month]
-      : "Start the run to see a sequence of wet and dry hours.";
+      ? (sample.exposed ? "First exposed trial" : "Trial " + number.format(sample.trial) + " · All dry")
+        + " · " + config.months[sample.month]
+        + (sample.exposed ? " · #" + number.format(sample.trial) : "")
+      : "Press Start to play a sample from the simulation.";
+    replayButton.disabled = !sample;
     sampleResult.hidden = !sample;
     if (sample) {
       sampleResult.textContent = sample.exposed ? "Exposed" : "All dry";
@@ -93,32 +103,83 @@
     for (let offset = 0; offset < selectedScenario.durationHours; offset++) {
       const item = document.createElement("li");
       const step = sample?.steps[offset];
-      item.dataset.weather = step ? (step.wet ? "wet" : "dry") : "waiting";
-      item.style.setProperty("--reveal-delay", offset * 85 + "ms");
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "hour-card";
+      card.dataset.weather = step ? (step.wet ? "wet" : "dry") : "ready";
+      card.disabled = !step;
+      card.setAttribute("aria-pressed", String(false));
 
       const time = document.createElement("span");
       time.className = "sample-time";
       time.textContent = timeLabel(selectedScenario.startHour + offset);
 
-      const icon = document.createElement("span");
-      icon.className = "weather-icon";
-      icon.setAttribute("aria-hidden", "true");
-      if (step?.wet) {
-        for (let drop = 0; drop < 3; drop++) icon.append(document.createElement("i"));
-      }
-
       const state = document.createElement("span");
       state.className = "sample-state";
-      state.textContent = step ? (step.wet ? "Wet" : "Dry") : "Waiting";
+      state.textContent = step ? (step.wet ? "Wet" : "Dry") : "—";
 
       const chance = document.createElement("span");
       chance.className = "sample-chance";
-      chance.textContent = step ? percent.format(step.wetProbability) + " wet chance" : " ";
+      chance.textContent = step ? percent.format(step.wetProbability) + " wet chance" : "";
 
-      item.append(time, icon, state, chance);
+      card.append(time, state, chance);
+      card.addEventListener("click", () => {
+        resumePlayback = false;
+        stopPlayback();
+        showHour(offset);
+      });
+      item.append(card);
       hours.push(item);
     }
     sampleHours.replaceChildren(...hours);
+
+    if (!sample) {
+      scene.dataset.weather = "ready";
+      sceneTime.textContent = "Event preview";
+      sceneWeather.textContent = "Ready to start";
+    }
+  }
+
+  function showHour(offset) {
+    currentHour = offset;
+    const step = example.steps[offset];
+    const hour = selectedScenario.startHour + offset;
+    scene.dataset.weather = step.wet ? "wet" : "dry";
+    sceneTime.textContent = timeLabel(hour) + "–" + timeLabel(hour + 1);
+    sceneWeather.textContent = step.wet ? "Wet hour" : "Dry hour";
+    for (const [index, card] of sampleHours.querySelectorAll("button").entries()) {
+      card.setAttribute("aria-pressed", String(index === offset));
+    }
+  }
+
+  function stopPlayback() {
+    clearTimeout(sceneTimer);
+    sceneTimer = null;
+    scene.dataset.playing = "false";
+  }
+
+  function playHour(offset = 0) {
+    stopPlayback();
+    showHour(offset);
+    scene.dataset.playing = "true";
+    sceneTimer = setTimeout(() => {
+      if (offset + 1 < example.steps.length) {
+        playHour(offset + 1);
+      } else {
+        stopPlayback();
+      }
+    }, hourPlaybackTime);
+  }
+
+  for (let index = 0; index < 38; index++) {
+    const drop = document.createElement("i");
+    drop.style.setProperty("--rain-x", (index * 37 % 101) + "%");
+    drop.style.setProperty("--rain-y", (index * 53 % 158) + "px");
+    drop.style.setProperty("--rain-length", (12 + index * 13 % 18) + "px");
+    drop.style.setProperty("--rain-period", (450 + index * 53 % 360) + "ms");
+    drop.style.setProperty("--rain-delay", -(index * 83 % 750) + "ms");
+    byId("scene-rain").append(drop);
   }
 
   function wilson(successes, count) {
@@ -136,7 +197,6 @@
     status.textContent = label;
     status.dataset.state = state;
     const running = state === "running";
-    samplePanel.dataset.running = String(running);
     startButton.textContent = state === "paused" ? "Resume" : "Start";
     startButton.disabled = running || trials === maxTrials;
     pauseButton.disabled = !running;
@@ -237,6 +297,9 @@
 
   function resetRun() {
     cancelBatch();
+    stopPlayback();
+    example = null;
+    resumePlayback = false;
     trials = 0;
     exposed = 0;
     history.length = 0;
@@ -248,16 +311,22 @@
   function runBatch() {
     timer = null;
     const batchEnd = Math.min(trials + batchSize, maxTrials);
-    if (trials % sampleRefresh === 0) {
-      const sample = { trial: trials + 1, steps: [] };
-      sample.exposed = simulateEvent(selectedScenario, sample);
-      exposed += sample.exposed;
-      trials++;
-      renderSample(sample);
-    }
+    let sample = null;
     while (trials < batchEnd) {
-      exposed += simulateEvent(selectedScenario);
+      // Prefer the first exposed event of the opening batch. Every example is counted once.
+      const trace = !example && !sample?.exposed ? { trial: trials + 1, steps: [] } : null;
+      const result = simulateEvent(selectedScenario, trace);
+      if (trace && (!sample || result)) {
+        trace.exposed = result;
+        sample = trace;
+      }
+      exposed += result;
       trials++;
+    }
+    if (sample) {
+      example = sample;
+      renderSample(example);
+      playHour();
     }
     history.push({ trials, estimate: exposed / trials, interval: wilson(exposed, trials) });
     renderResults();
@@ -321,13 +390,21 @@
   startButton.addEventListener("click", () => {
     if (timer !== null || trials === maxTrials) return;
     setStatus("Running", "running");
+    if (resumePlayback && example) playHour(currentHour);
+    resumePlayback = false;
     runBatch();
   });
   pauseButton.addEventListener("click", () => {
     cancelBatch();
+    resumePlayback = sceneTimer !== null;
+    stopPlayback();
     setStatus("Paused", "paused");
   });
   resetButton.addEventListener("click", resetRun);
+  replayButton.addEventListener("click", () => {
+    resumePlayback = false;
+    playHour();
+  });
   new ResizeObserver(drawChart).observe(chart);
   readSettings();
   renderReference();

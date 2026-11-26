@@ -2,7 +2,7 @@
 
 Open the [live demo](https://kumaragekpv.github.io/malabe-rain-risk/). To open it from a downloaded copy, keep all files in `docs/` together and open `docs/index.html` in a current browser. Simulation uses the fitted values shipped with the page and requires no account or live API.
 
-![Numbered callouts mark the event inputs, Start/Pause/Reset buttons, running plot, Wilson interval and notebook reference result](figures/demo-screenshot-labelled.png)
+![Six callouts mark the inputs, run controls, example event, running risk, Wilson interval and notebook reference check](figures/demo-screenshot-labelled.png)
 
 ## Controls
 
@@ -12,15 +12,16 @@ Open the [live demo](https://kumaragekpv.github.io/malabe-rain-risk/). To open i
 | Local start | Sets the start on the Sri Lanka clock (Asia/Colombo, UTC+05:30). | 08:00 through 15:00, at one-hour steps | 08:00 |
 | Duration | Sets the number of consecutive one-hour intervals. A three-hour event starting at 08:00 ends at 11:00. | 1, 2, 3 or 4 hours | 3 hours |
 | Wet threshold | An interval is wet when its estimated total is at least this many millimetres. | 0.1, 0.2, 0.5 or 1.0 mm | 0.2 mm |
-| Start | Runs batches of events, or resumes a paused run. | Up to 20,000 trials per run | Ready, zero trials |
-| Pause | Stops adding trials and keeps the results so far. | Available during a run | Disabled before Start |
+| Start / Resume | Runs batches of events. After pausing, Resume continues from the saved count. | Up to 20,000 trials per run | Ready, zero trials |
+| Pause | Freezes the sample and stops adding trials. | Available during a run | Disabled before Start |
 | Reset | Clears results and keeps the current settings. | Available once a run starts | Disabled before Start |
 
 Changing any event setting clears the existing trials. Press **Start** to simulate the new scenario.
 
 ## Reading the outputs
 
-- **Trials** counts the simulated events so far. An event is exposed when at least one of its hours is wet.
+- **Trials** and the progress bar show how many of the 20,000 events have been simulated so far.
+- **One simulated event** displays an actual trial included in that count. Each card shows the hour, its wet or dry outcome, and the probability used to draw it. The first hour uses its fitted wet frequency. Each later hour uses the probability conditioned on the previous state. The event counts as exposed if at least one hour is wet. Rain animates on wet cards while running. The states and probabilities remain readable with a reduced-motion preference.
 - **Simulated exposure** is the percentage of events exposed. The teal line tracks that estimate as trial count grows.
 - **95% Wilson interval** appears in the readout and as shading around the running estimate. It describes sampling variation with the fitted model held fixed. More trials usually narrow the interval.
 - **Exact fitted risk** is the dashed line. It comes from multiplying the dry-state probabilities, so it stays fixed for the current settings. The comparison panel shows the selected hour, the 13:00 baseline, and their difference in percentage points.
@@ -28,7 +29,7 @@ Changing any event setting clears the existing trials. Press **Start** to simula
 
 ## Try this comparison
 
-Keep October + November, three hours and 0.2 mm. With **08:00** selected, the exact fitted risks are **43.4% at 08:00** and **78.7% at 13:00**, a difference of **35.3 percentage points**. Press **Start** and watch the estimate approach the 08:00 fitted value. Change the start to **13:00** to clear the old trials, then press **Start** again and compare the new result.
+Keep October + November, three hours and 0.2 mm. With **08:00** selected, the exact fitted risks are **43.4% at 08:00** and **78.7% at 13:00**, a difference of **35.3 percentage points**. Press **Start** and watch the estimate approach the 08:00 fitted value. Pause on an example event and check how its hourly states explain the exposure result. Change the start to **13:00** to clear the old trials, then press **Start** again and compare the new result.
 
 ## Check against the notebook
 

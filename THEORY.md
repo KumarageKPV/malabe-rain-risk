@@ -54,7 +54,7 @@ For a one-hour event both probabilities are $q_{m,s}$. Both combined-season risk
 
 ## 4. Numerical method
 
-At a one-hour time step, compare independent uniform draws with $q_{m,s}$ for the first state and $T_{m,s+k}(X_{s+k-1},1)$ for each following state. Mark a trial exposed once any state is wet. For $K$ exposed trials out of $N$, the estimated risk is $\hat p=K/N$. The notebook uses 20,000 trials per main scenario and independent seeded streams for the main comparison, error experiment, and resampling.
+At a one-hour time step, compare independent uniform draws with $q_{m,s}$ for the first state and $T_{m,s+k}(X_{s+k-1},1)$ for each following state. Mark a trial exposed once any state is wet. For $K$ exposed trials out of $N$, the estimated risk is $\hat p=K/N$. The notebook uses 20,000 trials per main scenario and independent seeded streams for the main comparison, error experiment, and resampling. The browser illustrates the transitions by displaying one simulated trial already contributing to its running estimate.
 
 For a 95% Wilson interval use $z=1.959964$, $D=1+z^2/N$, a centre $c$, and half-width $w$. Clamp the endpoints to $[0,1]$ against rounding. This measures uncertainty from simulating $N$ events with fixed fitted probabilities. [Wilson, reference 6](REFERENCES.md).
 

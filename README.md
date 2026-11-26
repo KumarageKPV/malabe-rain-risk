@@ -4,7 +4,7 @@ Compare October and November start times for an outdoor event in Malabe using ho
 
 **[Live demo](https://kumaragekpv.github.io/malabe-rain-risk/)** · [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KumarageKPV/malabe-rain-risk/blob/main/notebook/malabe-rain-risk.ipynb)
 
-![Rain-risk demo with event settings, a live simulation plot, a Wilson interval and the notebook reference check](figures/demo-screenshot.png)
+![Rain-risk demo showing a wet and dry event timeline, running exposure, a Wilson interval and the notebook reference check](figures/demo-screenshot.png)
 
 ## The question
 
@@ -25,7 +25,7 @@ Verified in a clean Python 3.12 kernel with NumPy 2.5.5, pandas 3.1.1 and Matplo
 
 ## Using the demo
 
-Choose a month, start, duration and wet threshold. Press **Start** to see the simulated exposure estimate and 95% Wilson interval update. The event settings panel compares the exact fitted risks at your selected start and at 13:00. [User guide and labelled screenshot](USER_GUIDE.md).
+Choose a month, start, duration and wet threshold. Press **Start** to see an example event’s hourly wet and dry states, with animated rain on wet hours. The running estimate and 95% Wilson interval summarise all trials. Press **Pause** to inspect the displayed event or **Resume** to continue. The event settings panel compares the exact fitted risks at your selected start and at 13:00. [User guide and labelled screenshot](USER_GUIDE.md).
 
 ## Model and mathematics
 

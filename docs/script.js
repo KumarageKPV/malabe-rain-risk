@@ -5,6 +5,7 @@
   const maxTrials = 20_000;
   const batchSize = 100;
   const batchDelay = 36;
+  const sampleRefresh = 2_500;
   const number = new Intl.NumberFormat("en");
   const percent = new Intl.NumberFormat("en", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const byId = (id) => document.getElementById(id);
@@ -17,6 +18,12 @@
   const resetButton = byId("reset");
   const chart = byId("risk-chart");
   const context = chart.getContext("2d");
+  const progress = byId("run-progress");
+  const samplePanel = byId("sample");
+  const sampleHours = byId("sample-hours");
+  const sampleDescription = byId("sample-description");
+  const sampleResult = byId("sample-result");
+  progress.max = maxTrials;
   let selectedScenario;
   let fittedRisk;
   let timer = null;
@@ -49,20 +56,69 @@
     );
   }
 
-  function simulateEvent(scenario) {
+  function simulateEvent(scenario, sample) {
     let month = scenario.month;
     if (month === "season") {
       month = Math.random() < config.monthWeights["10"] ? "10" : "11";
     }
     const hours = parametersFor(scenario, month);
-    let wet = Math.random() < hours[scenario.startHour].initialWet;
+    let wetProbability = hours[scenario.startHour].initialWet;
+    let wet = Math.random() < wetProbability;
     let eventExposed = wet;
+    if (sample) {
+      sample.month = month;
+      sample.steps.push({ wet, wetProbability });
+    }
     for (let offset = 1; offset < scenario.durationHours; offset++) {
       const hour = hours[scenario.startHour + offset];
-      wet = Math.random() < (wet ? hour.wetAfterWet : hour.wetAfterDry);
+      wetProbability = wet ? hour.wetAfterWet : hour.wetAfterDry;
+      wet = Math.random() < wetProbability;
       eventExposed = eventExposed || wet;
+      if (sample) sample.steps.push({ wet, wetProbability });
     }
     return Number(eventExposed);
+  }
+
+  function renderSample(sample) {
+    sampleDescription.textContent = sample
+      ? "Trial " + number.format(sample.trial) + " · " + config.months[sample.month]
+      : "Start the run to see a sequence of wet and dry hours.";
+    sampleResult.hidden = !sample;
+    if (sample) {
+      sampleResult.textContent = sample.exposed ? "Exposed" : "All dry";
+      sampleResult.dataset.outcome = sample.exposed ? "wet" : "dry";
+    }
+
+    const hours = [];
+    for (let offset = 0; offset < selectedScenario.durationHours; offset++) {
+      const item = document.createElement("li");
+      const step = sample?.steps[offset];
+      item.dataset.weather = step ? (step.wet ? "wet" : "dry") : "waiting";
+      item.style.setProperty("--reveal-delay", offset * 85 + "ms");
+
+      const time = document.createElement("span");
+      time.className = "sample-time";
+      time.textContent = timeLabel(selectedScenario.startHour + offset);
+
+      const icon = document.createElement("span");
+      icon.className = "weather-icon";
+      icon.setAttribute("aria-hidden", "true");
+      if (step?.wet) {
+        for (let drop = 0; drop < 3; drop++) icon.append(document.createElement("i"));
+      }
+
+      const state = document.createElement("span");
+      state.className = "sample-state";
+      state.textContent = step ? (step.wet ? "Wet" : "Dry") : "Waiting";
+
+      const chance = document.createElement("span");
+      chance.className = "sample-chance";
+      chance.textContent = step ? percent.format(step.wetProbability) + " wet chance" : " ";
+
+      item.append(time, icon, state, chance);
+      hours.push(item);
+    }
+    sampleHours.replaceChildren(...hours);
   }
 
   function wilson(successes, count) {
@@ -80,6 +136,8 @@
     status.textContent = label;
     status.dataset.state = state;
     const running = state === "running";
+    samplePanel.dataset.running = String(running);
+    startButton.textContent = state === "paused" ? "Resume" : "Start";
     startButton.disabled = running || trials === maxTrials;
     pauseButton.disabled = !running;
     resetButton.disabled = trials === 0 && !running;
@@ -88,6 +146,7 @@
   function renderResults() {
     const latest = history.at(-1);
     byId("trials").textContent = number.format(trials);
+    progress.value = trials;
     byId("estimate").textContent = latest ? percent.format(latest.estimate) : "—";
     byId("interval").textContent = latest ? latest.interval.map((value) => percent.format(value)).join("–") : "—";
     byId("chart-empty").hidden = trials > 0;
@@ -117,6 +176,7 @@
     context.font = "11px Segoe UI, sans-serif";
     context.fillStyle = "#aec1ca";
     context.strokeStyle = "#30424d";
+    context.lineWidth = 1;
     context.textBaseline = "middle";
     for (const risk of [0, .25, .5, .75, 1]) {
       context.beginPath();
@@ -181,12 +241,20 @@
     exposed = 0;
     history.length = 0;
     setStatus("Ready", "ready");
+    renderSample(null);
     renderResults();
   }
 
   function runBatch() {
     timer = null;
     const batchEnd = Math.min(trials + batchSize, maxTrials);
+    if (trials % sampleRefresh === 0) {
+      const sample = { trial: trials + 1, steps: [] };
+      sample.exposed = simulateEvent(selectedScenario, sample);
+      exposed += sample.exposed;
+      trials++;
+      renderSample(sample);
+    }
     while (trials < batchEnd) {
       exposed += simulateEvent(selectedScenario);
       trials++;
@@ -213,6 +281,8 @@
     byId("selected-time").textContent = timeLabel(selectedScenario.startHour) + " selected";
     byId("selected-risk").textContent = percent.format(fittedRisk);
     byId("baseline-risk").textContent = percent.format(baselineRisk);
+    byId("selected-bar").style.setProperty("--risk", fittedRisk * 100 + "%");
+    byId("baseline-bar").style.setProperty("--risk", baselineRisk * 100 + "%");
     byId("risk-difference").textContent = Math.abs(difference) < .05
       ? "Difference under 0.1 percentage points"
       : Math.abs(difference).toFixed(1) + " percentage points " + (difference < 0 ? "lower" : "higher");

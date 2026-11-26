@@ -29,9 +29,13 @@ Changing any event setting clears the existing trials. Press **Start** to simula
 - **Exact fitted risk** is the dashed line. It comes from multiplying the dry-state probabilities, so it stays fixed for the current settings. The comparison panel shows the selected hour, the 13:00 baseline, and their difference in percentage points.
 - **Notebook reference check** evaluates the fixed scenario below at every page load. Its **PASS** badge is independent of the simulated trial count.
 
+### Why repeated runs differ
+
+Each fresh run uses new random draws. The example event, simulated exposure percentage and Wilson interval can vary with identical settings. The exact fitted risk and 13:00 comparison stay the same for those settings. With the default settings and 20,000 trials, the simulated percentage will usually be within about 0.7 percentage points of the 43.4% fitted risk.
+
 ## Try this comparison
 
-Keep October + November, three hours and 0.2 mm. With **08:00** selected, the exact fitted risks are **43.4% at 08:00** and **78.7% at 13:00**, a difference of **35.3 percentage points**. Press **Start** and watch the estimate approach the 08:00 fitted value. Select the highlighted wet or dry cards, or replay the scene, to see which hours led to the exposure result. Change the start to **13:00** to clear the old trials, then press **Start** again and compare the new result.
+Keep October + November, three hours and 0.2 mm. With **08:00** selected, the exact fitted risks are **43.4% at 08:00** and **78.7% at 13:00**, a difference of **35.3 percentage points**. Press **Start** and watch the estimate approach the 08:00 fitted value. Pause or wait for the run to finish, then select an hour or replay the scene to see which hours led to the exposure result. Change the start to **13:00** to clear the old trials, then press **Start** again and compare the new result.
 
 ## Check against the notebook
 

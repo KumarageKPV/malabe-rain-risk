@@ -16,9 +16,13 @@
 
 [8] H. R. Künsch, “The jackknife and the bootstrap for general stationary observations,” *The Annals of Statistics*, vol. 17, no. 3, pp. 1217–1241, 1989, doi: [10.1214/aos/1176347265](https://doi.org/10.1214/aos/1176347265).
 
+[9] K. R. Gabriel and J. Neumann, “A Markov chain model for daily rainfall occurrence at Tel Aviv,” *Quarterly Journal of the Royal Meteorological Society*, vol. 88, no. 375, pp. 90–95, 1962, doi: [10.1002/qj.49708837511](https://doi.org/10.1002/qj.49708837511).
+
+[10] W.-R. Huang et al., “The impact of the Madden-Julian oscillation on spring and autumn afternoon diurnal convection in Sri Lanka,” *npj Climate and Atmospheric Science*, vol. 7, no. 1, Art. no. 42, 2024, doi: [10.1038/s41612-024-00586-5](https://doi.org/10.1038/s41612-024-00586-5).
+
 ## Software and attribution
 
-[9] NumPy developers, “Random Generator,” *NumPy Reference*, [Online]. Available: [Generator API](https://numpy.org/doc/stable/reference/random/generator.html). Accessed: Nov. 26, 2026.
+[11] NumPy developers, “Random Generator,” *NumPy Reference*, [Online]. Available: [Generator API](https://numpy.org/doc/stable/reference/random/generator.html). Accessed: Nov. 26, 2026.
 
 The notebook uses NumPy, pandas and Matplotlib through their public APIs. The project implements the equations directly in Python and JavaScript. The MIT licence applies to the project code. [NumPy licence](https://numpy.org/doc/stable/license.html) · [pandas licence](https://pandas.pydata.org/docs/getting_started/overview.html#license) · [Matplotlib licence](https://matplotlib.org/stable/project/license.html) · [Project licence](LICENSE).
 
